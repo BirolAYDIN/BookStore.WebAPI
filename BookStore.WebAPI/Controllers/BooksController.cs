@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BookStore.WebAPI.Core.OtherObjects;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.WebAPI.Controllers;
 
@@ -36,9 +38,30 @@ public class BookController : ControllerBase
     /// </summary>
     /// <returns>[string]</returns>
 
-    [Route("Getbooks")]
-    [HttpGet]
+
+    [HttpGet("Getbooks")]
     public ActionResult<string> Get()
+    {
+        return Ok(Classics);
+    }
+
+    [HttpGet("GetUserRole")]
+    [Authorize(Roles =StaticUserRoles.USER)]
+    public ActionResult<string> GetUserRole()
+    {
+        return Ok(Classics);
+    }
+
+    [HttpGet("GetAdminRole")]
+    [Authorize(Roles = StaticUserRoles.ADMIN)]
+    public ActionResult<string> GetAdminRole()
+    {
+        return Ok(Classics);
+    }
+
+    [HttpGet("GetOwnerRole")]
+    [Authorize(Roles = StaticUserRoles.OWNER)]
+    public ActionResult<string> GetOwnerRole()
     {
         return Ok(Classics);
     }
