@@ -1,5 +1,7 @@
 using BookStore.WebAPI.Core.DbContext;
 using BookStore.WebAPI.Core.Entities;
+using BookStore.WebAPI.Core.Interfaces;
+using BookStore.WebAPI.Core.Sevices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -81,7 +83,9 @@ builder.Services
         };
     });
 
+// Services Dependency Injected
 
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
