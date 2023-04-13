@@ -9,3 +9,5 @@
 - Microsoft.AspNetCore.Identity.EntityFrameworkCore
 - Microsoft.EntityFrameworkCore.SqlServer
 - Microsoft.EntityFrameworkCore.Tools
+
+![Swagger UI](Screenshot%202023-04-14%20005904.png)
