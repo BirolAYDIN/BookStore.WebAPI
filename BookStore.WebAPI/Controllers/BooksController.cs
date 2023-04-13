@@ -45,6 +45,11 @@ public class BookController : ControllerBase
         return Ok(Classics);
     }
 
+    /// <summary>
+    /// Retrieve data with user authorization
+    /// </summary>
+    /// <returns>[string]</returns>
+
     [HttpGet("GetUserRole")]
     [Authorize(Roles =StaticUserRoles.USER)]
     public ActionResult<string> GetUserRole()
@@ -52,12 +57,22 @@ public class BookController : ControllerBase
         return Ok(Classics);
     }
 
+    /// <summary>
+    /// Getting data with admin authorization
+    /// </summary>
+    /// <returns>[string]</returns>
+
     [HttpGet("GetAdminRole")]
     [Authorize(Roles = StaticUserRoles.ADMIN)]
     public ActionResult<string> GetAdminRole()
     {
         return Ok(Classics);
     }
+
+    /// <summary>
+    /// Retrieve data with owner authorization
+    /// </summary>
+    /// <returns>[string]</returns>
 
     [HttpGet("GetOwnerRole")]
     [Authorize(Roles = StaticUserRoles.OWNER)]

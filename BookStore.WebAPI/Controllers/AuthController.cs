@@ -124,4 +124,33 @@ public class AuthController : ControllerBase
         string token = new JwtSecurityTokenHandler().WriteToken(tokenObject);
         return token;
     }
+
+    // Route => User -> Admin
+    [HttpPost("make-admin")]
+    public async Task<IActionResult> MakeAdmin(UpdatePermissionDTO updatePermissionDTO)
+    {
+        var user = await _userManager.FindByNameAsync(updatePermissionDTO.UserName);
+
+        if (user is null)
+            return BadRequest("Invalid User name.");
+
+        await _userManager.AddToRoleAsync(user, StaticUserRoles.ADMIN);
+
+        return Ok("User is now an ADMIN.");
+    }
+
+
+    // Route => User -> Owner
+    [HttpPost("make-owner")]
+    public async Task<IActionResult> MakeOwner(UpdatePermissionDTO updatePermissionDTO)
+    {
+        var user = await _userManager.FindByNameAsync(updatePermissionDTO.UserName);
+
+        if (user is null)
+            return BadRequest("Invalid User name.");
+
+        await _userManager.AddToRoleAsync(user, StaticUserRoles.OWNER);
+
+        return Ok("User is now an OWNER.");
+    }
 }
