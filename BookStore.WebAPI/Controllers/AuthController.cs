@@ -1,7 +1,9 @@
 ﻿using BookStore.WebAPI.Core.DTOs;
+using BookStore.WebAPI.Core.Entities;
 using BookStore.WebAPI.Core.OtherObjects;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,11 +15,11 @@ namespace BookStore.WebAPI.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IConfiguration _configuration;
 
-    public AuthController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+    public AuthController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -46,13 +48,23 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult> Register(RegisterDTO registerDTO)
     {
+        bool isUserRoleExists = await _roleManager.RoleExistsAsync(StaticUserRoles.USER);
+        bool isAdminRoleExists = await _roleManager.RoleExistsAsync(StaticUserRoles.ADMIN);
+        bool isOwnerRoleExists = await _roleManager.RoleExistsAsync(StaticUserRoles.OWNER);
+
+        if (!isUserRoleExists && !isAdminRoleExists && !isOwnerRoleExists)
+            return BadRequest("Roles are not seeded.");
+
+        // ---------------------------------------------------------
         var isExistsUser = await _userManager.FindByNameAsync(registerDTO.UserName);
 
         if (isExistsUser is not null)
             return BadRequest("User name already exists.");
 
-        IdentityUser newUser = new IdentityUser()
+        ApplicationUser newUser = new ApplicationUser()
         {
+            FirstName = registerDTO.FirstName,
+            LastName = registerDTO.LastName,
             Email = registerDTO.Email,
             UserName = registerDTO.UserName,
             SecurityStamp = Guid.NewGuid().ToString(),
@@ -96,6 +108,8 @@ public class AuthController : ControllerBase
             new Claim(ClaimTypes.Name, user.UserName),
             new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim("JWTID", Guid.NewGuid().ToString()),
+            new Claim("First Name", user.FirstName),
+            new Claim("Last Name", user.LastName),
         };
 
         foreach (var userRole in userRoles)
